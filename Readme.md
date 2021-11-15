@@ -69,6 +69,14 @@ localhost:80/users/<user_id></br>
 **Route to update user -**
 localhost:80/users/<user_id></br>
 
+
+| Endpoint     | Method | Payload                                                                                                                                                                                                                        | Response                      | Requirements                                                           | Description                                                                                            |
+| ------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| /auth/signup | POST   | {</br>&emsp;"email":"test@test.com",</br>&emsp;"firstName":"test",</br>&emsp;"lastName":"test",</br>&emsp;"password":"test123",</br>&emsp;"image":"image.jpg"</br>}                  | {</br>&emsp;"message":"UserCreated!,</br>&emsp;userId</br>} | `email` must be Unique     | Signup the User                                                                                        |
+| /auth/login  | POST   | {</br>&emsp;"email":"test@test.com",</br>&emsp;"password":"test123"</br>}                                                                                                                                                    | {</br>&emsp;"token":"JWT Token",</br>&emsp;userId</br>}             | None                                                                   | Authenticates the user and generates the JWT                                                          |
+| /users/:userId       | GET    | params : `userId`| {</br>&emsp;"message":"User fetched.",</br>&emsp;user {  }</br>}          |  | Fetches User Details |
+| users/:userId | PUT    | params : `userId`</br>{</br>&emsp;"email":"test@test.com",</br>&emsp;"firstName":"test",</br>&emsp;"lastName":"test",</br>&emsp;"password":"test123",</br>&emsp;"image":"image.jpg"</br>}| {</br>&emsp;"message":"UserUpdated!",</br>&emsp;userId</br>}          | `email` must not be used by other user | Updates the User Details |
+
   
 # Author
 Anshul Jain
