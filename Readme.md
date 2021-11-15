@@ -20,6 +20,9 @@
 1. Clone this repo
 2. Navigate to Project Directory
 3. Update .env file
+</br>&emsp;`PORT`&emsp;Port at which you want to run Node Application.
+</br>&emsp;`MONGO_STRING`&emsp;MongoDB Connection String.
+</br>&emsp;`JWT_SECRET`&emsp;JWT Secret Key to Encrypt Token.
 
 4. Install Packages
 
