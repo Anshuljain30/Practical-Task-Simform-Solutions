@@ -1,42 +1,42 @@
-const dotenv = require("dotenv");
-const express = require("express");
-const mongoose = require("mongoose");
-const multer = require("multer");
-const path = require("path");
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const multer = require('multer');
+const path = require('path');
 
-const userRoutes = require("./routes/users");
-const authRoutes = require("./routes/auth");
+const userRoutes = require('./routes/users');
+const authRoutes = require('./routes/auth');
+const errorController = require('./controllers/error');
 
-dotenv.config();
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 //CORS Headers
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
-    "Access-Control-Allow-Methods",
-    "OPTIONS, GET, POST, PUT, PATCH, DELETE"
+    'Access-Control-Allow-Methods',
+    'OPTIONS, GET, POST, PUT, PATCH, DELETE'
   );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
 
 //Image Filter
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "images");
+    cb(null, 'images');
   },
   filename: (req, file, cb) => {
-    cb(null, new Date().toISOString() + "-" + file.originalname);
-  },
+    cb(null, new Date().toISOString() + '-' + file.originalname);
+  }
 });
 
 const fileFilter = (req, file, cb) => {
   if (
-    file.mimetype === "image/png" ||
-    file.mimetype === "image/jpg" ||
-    file.mimetype === "image/jpeg"
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
   ) {
     cb(null, true);
   } else {
@@ -50,27 +50,26 @@ app.use(
   multer({
     storage: fileStorage,
     limits: { fileSize: 1024 * 1024 * 2 },
-    fileFilter: fileFilter,
-  }).single("image")
+    fileFilter: fileFilter
+  }).single('image')
 );
-app.use("/images", express.static(path.join(__dirname, "images")));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 //Middlewares to funnel requests
-app.use("/users", userRoutes);
-app.use("/auth", authRoutes);
+app.use('/users', userRoutes);
+app.use('/auth', authRoutes);
 
-//Error Handling middleware
-app.use((error, req, res, next) => {
-  const status = error.statusCode || 500;
-  const message = error.message;
-  const data = error.data;
-  res.status(status).json({ message: message, data: data });
-});
+//Error Controller
+app.use(errorController);
 
 //Connecting to DB and Starting the Server
-mongoose
-  .connect(process.env.MONGO_STRING)
-  .then((result) => {
-    app.listen(port);
-  })
-  .catch((err) => console.log(err));
+mongoose.connect(process.env.MONGO_STRING, (err) => {
+  if (err) {
+    console.log('MongoDB Error', err);
+    return;
+  }
+  console.log('Connected to mongodb (Hopefully), starting server..');
+  app.listen(PORT, () => {
+    console.log('listening on port: ' + PORT);
+  });
+});

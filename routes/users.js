@@ -1,10 +1,11 @@
-const express = require("express");
-const { body } = require("express-validator");
+const express = require('express');
+const { body } = require('express-validator');
 
-const User = require("../models/user");
+const User = require('../models/user');
+const catchASync = require('../util/catchASync');
 
-const userController = require("../controllers/users");
-const isAuth = require("../middleware/is-auth");
+const userController = require('../controllers/users');
+const isAuth = require('../middleware/is-auth');
 
 const router = express.Router();
 
@@ -13,30 +14,30 @@ const router = express.Router();
 //Route for Edit User
 //Method: PUT (REST method to be used for Updating Resourse)
 router.put(
-  "/:userId",
+  '/:userId',
   isAuth,
   [
-    body("email")
+    body('email')
       .isEmail()
-      .withMessage("Please enter a valid email.")
+      .withMessage('Please enter a valid email.')
       .custom((value, { req }) => {
         return User.findOne({ email: value }).then((userDoc) => {
           if (userDoc) {
             if (userDoc._id.toString() !== req.userId) {
-              return Promise.reject("E-Mail address already exists!");
+              return Promise.reject('E-Mail address already exists!');
             }
           }
         });
       })
       .normalizeEmail(),
-    body("password").trim().isLength({ min: 5 }),
-    body("firstName").trim().not().isEmpty(),
-    body("lastName").trim().not().isEmpty(),
+    body('password').trim().isLength({ min: 5 }),
+    body('firstName').trim().not().isEmpty(),
+    body('lastName').trim().not().isEmpty()
   ],
-  userController.editUser
+  catchASync(userController.editUser)
 );
 
 //Route to get User Details
-router.get("/:userId", isAuth, userController.getUser);
+router.get('/:userId', catchASync(isAuth), catchASync(userController.getUser));
 
 module.exports = router;
