@@ -1,10 +1,10 @@
-const express = require('express');
-const { body } = require('express-validator');
+const express = require("express");
+const { body } = require("express-validator");
 
-const User = require('../models/user');
-const catchASync = require('../util/catchASync');
+const User = require("../models/user");
+const catchASync = require("../util/catchASync");
 
-const authController = require('../controllers/auth');
+const authController = require("../controllers/auth");
 
 const router = express.Router();
 
@@ -14,34 +14,34 @@ const router = express.Router();
 //First Name, Last Name, Organisation, EmployeeId must not be Empty/Null
 
 router.post(
-  '/signup',
+  "/signup",
   [
-    body('email')
+    body("email")
       .isEmail()
-      .withMessage('Please enter a valid email.')
+      .withMessage("Please enter a valid email.")
       .custom((value, { req }) => {
         return User.findOne({ email: value }).then((userDoc) => {
           if (userDoc) {
-            return Promise.reject('E-Mail address already exists!');
+            return Promise.reject("E-Mail address already exists!");
           }
         });
       })
       .normalizeEmail(),
-    body('password').trim().isLength({ min: 5 }),
-    body('firstName').trim().not().isEmpty(),
-    body('lastName').trim().not().isEmpty()
+    body("password").trim().isLength({ min: 5 }),
+    body("firstName").trim().not().isEmpty(),
+    body("lastName").trim().not().isEmpty()
   ],
   catchASync(authController.signup)
 );
 
 router.post(
-  '/login',
+  "/login",
   [
-    body('email')
+    body("email")
       .isEmail()
-      .withMessage('Please enter a valid email.')
+      .withMessage("Please enter a valid email.")
       .normalizeEmail(),
-    body('password').trim().isLength({ min: 5 })
+    body("password").trim().isLength({ min: 5 })
   ],
   catchASync(authController.login)
 );

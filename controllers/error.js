@@ -1,4 +1,4 @@
-const { AppError } = require('../lib/AppError');
+const { AppError } = require("../lib/AppError");
 
 const errorController = (err, req, res, next) => {
   if (err instanceof AppError) {
@@ -8,10 +8,10 @@ const errorController = (err, req, res, next) => {
   }
 
   if (err instanceof SyntaxError) {
-    return res.status(400).json({ message: err.message, type: 'SyntaxError' });
+    return res.status(400).json({ message: err.message, type: "SyntaxError" });
   }
 
-  return res.status(500).json({ message: 'Internal server error!' });
+  return res.status(500).json({ message: "Internal server error!" });
 };
 
 module.exports = errorController;
