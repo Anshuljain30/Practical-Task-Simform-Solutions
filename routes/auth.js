@@ -2,6 +2,7 @@ const express = require("express");
 const { body } = require("express-validator");
 
 const User = require("../models/user");
+const catchASync = require("../util/catchASync");
 
 const authController = require("../controllers/auth");
 
@@ -28,9 +29,9 @@ router.post(
       .normalizeEmail(),
     body("password").trim().isLength({ min: 5 }),
     body("firstName").trim().not().isEmpty(),
-    body("lastName").trim().not().isEmpty(),
+    body("lastName").trim().not().isEmpty()
   ],
-  authController.signup
+  catchASync(authController.signup)
 );
 
 router.post(
@@ -40,9 +41,9 @@ router.post(
       .isEmail()
       .withMessage("Please enter a valid email.")
       .normalizeEmail(),
-    body("password").trim().isLength({ min: 5 }),
+    body("password").trim().isLength({ min: 5 })
   ],
-  authController.login
+  catchASync(authController.login)
 );
 
 module.exports = router;

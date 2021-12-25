@@ -1,24 +1,20 @@
 //Middleware to handle Authentication
 const jwt = require("jsonwebtoken");
+const { AppError } = require("../lib/AppError");
 
 module.exports = (req, res, next) => {
   const token = req.get("Authorization");
   if (!token) {
-    const error = new Error("Not authenticated.");
-    error.statusCode = 401;
-    throw error;
+    throw new AppError("Not authenticated.", "AuthenticationError", 401);
   }
   let decodedToken;
   try {
     decodedToken = jwt.verify(token, process.env.JWT_SECRET);
   } catch (err) {
-    err.statusCode = 500;
-    throw err;
+    throw new AppError("Internal server error", "InternalError", 500);
   }
   if (!decodedToken) {
-    const error = new Error("Not authenticated.");
-    error.statusCode = 401;
-    throw error;
+    throw new AppError("Not authenticated.", "AuthenticationError", 401);
   }
   req.userId = decodedToken.userId;
   next();
